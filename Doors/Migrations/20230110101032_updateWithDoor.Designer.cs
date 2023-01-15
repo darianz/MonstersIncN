@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Doors.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230107094825_doorsTodoor")]
-    partial class doorsTodoor
+    [Migration("20230110101032_updateWithDoor")]
+    partial class updateWithDoor
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

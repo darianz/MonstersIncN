@@ -1,4 +1,6 @@
-﻿using Doors.Models;
+﻿using Doors.Exceptions;
+using Doors.Exceptions.Doors.Exceptions;
+using Doors.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Doors.Services
@@ -23,26 +25,30 @@ namespace Doors.Services
                 .ToListAsync();
         }
 
-        public async Task UpdateDoor(int id, DoorUpdateRequest request)
+        public async Task<object> UpdateDoor(int id, DoorUpdateRequest request)
         {
             var door = await _context.Door.FindAsync(id);
 
             if (door == null)
             {
                 _logger.LogError("Door not found");
-                throw new Exception("Door not found");
+                throw new DoorNotFoundException("Door not found");
             }
             if (request.Used.HasValue)
             {
+                if (door.Used) { throw new DoorAlreadyUsedException("Door Already Used"); }
                 door.Used = true;
+                await _context.SaveChangesAsync();
+                return door;
             }
             else
             {
+                var energyTaken = door.Energy;
                 door.Energy = 0;
+                await _context.SaveChangesAsync();
+                return new Door { Energy = energyTaken , Id = door.Id, Used= door.Used};
+                
             }
-
-            await _context.SaveChangesAsync();
         }
     }
-
 }

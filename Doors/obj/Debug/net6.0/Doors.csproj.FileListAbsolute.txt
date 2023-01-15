@@ -67,3 +67,4 @@ C:\Users\Stoleron\source\repos\MonstersIncN\Doors\obj\Debug\net6.0\Doors.pdb
 C:\Users\Stoleron\source\repos\MonstersIncN\Doors\obj\Debug\net6.0\Doors.genruntimeconfig.cache
 C:\Users\Stoleron\source\repos\MonstersIncN\Doors\obj\Debug\net6.0\ref\Doors.dll
 C:\Users\Stoleron\source\repos\MonstersIncN\Doors\bin\Debug\net6.0\Migrations\DoorsSeedData.json
+C:\Users\Stoleron\source\repos\MonstersIncN\Doors\bin\Debug\net6.0\Newtonsoft.Json.dll

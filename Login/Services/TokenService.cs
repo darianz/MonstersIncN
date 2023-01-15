@@ -50,7 +50,7 @@ namespace Login.Services
 
         public string CreateTokenN(User user)
         {
-            
+
             var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var header = new JwtHeader(credentials)
             {
@@ -64,19 +64,19 @@ namespace Login.Services
 
 
             };
-      
+
             var Payload = new JwtPayload(_config["Jwt:Issuer"], _config["Jwt:Audience"], claims, DateTime.UtcNow, DateTime.UtcNow.AddHours(24));
-        
+
             var token = new JwtSecurityToken(header, Payload);
-         
+
             var tokenN = new JwtSecurityTokenHandler().WriteToken(token);
-            if(IsTokenValid(tokenN)) { return tokenN; }
+            if (IsTokenValid(tokenN)) { return tokenN; }
             else
             {
                 _logger.LogError("Token is not valid at CreateToken");
                 throw new Exception("token is not valid");
             }
-           
+
 
 
         }

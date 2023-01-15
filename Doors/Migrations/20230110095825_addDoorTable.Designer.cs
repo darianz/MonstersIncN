@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Doors.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230107090520_doorsTable")]
-    partial class doorsTable
+    [Migration("20230110095825_addDoorTable")]
+    partial class addDoorTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace Doors.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Doors.Models.Doors", b =>
+            modelBuilder.Entity("Doors.Models.Door", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +39,7 @@ namespace Doors.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Doors");
+                    b.ToTable("Door");
                 });
 #pragma warning restore 612, 618
         }

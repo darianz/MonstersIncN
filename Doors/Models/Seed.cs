@@ -10,7 +10,10 @@ namespace Doors.Models
         {
             try
             {
-                if (await context.Door.AnyAsync()) return;
+                //if (await context.Door.AnyAsync()) return;
+                
+                // reset the Door Table
+                await context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE Door");
 
                 var doorsData = await File.ReadAllTextAsync("./Migrations/DoorsSeedData.json");
 

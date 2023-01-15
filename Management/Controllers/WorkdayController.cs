@@ -4,7 +4,10 @@ using Management.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using NuGet.Protocol;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,9 +23,12 @@ namespace Management.Controllers
         private readonly HttpClient _loginClient;
         private readonly HttpClient _doorsClient;
         private readonly TokenService _tokenService;
-        private readonly IDistributedCache _cache;
-        
-        public WorkdayController(IHttpClientFactory clientFactory, TokenService tokenService, IDistributedCache cache, ILoggerFactory loggerFactory)
+        private readonly WorkdayCacheService _workdayCacheService;
+        private readonly DoorService _doorsService;
+        private readonly UserService _userService;
+        private readonly WorkdayService _workdayService;
+
+        public WorkdayController(IHttpClientFactory clientFactory, TokenService tokenService, ILoggerFactory loggerFactory, WorkdayCacheService workdayCacheService, DoorService doorsService, UserService userService, WorkdayService workdayService)
         {
             
             _loginClient = clientFactory.CreateClient("LoginClient");
@@ -30,8 +36,10 @@ namespace Management.Controllers
             _tokenService= tokenService;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<WorkdayController>();
-            _cache = cache;
-
+           _workdayCacheService= workdayCacheService;
+            _doorsService= doorsService;
+            _userService = userService;
+            _workdayService= workdayService;
         }
 
         
@@ -42,25 +50,20 @@ namespace Management.Controllers
             string authHeader = HttpContext.Request.Headers["Authorization"];
             _tokenService.IsTokenValid(authHeader);
             _doorsClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authHeader);
-            var response = await _doorsClient.GetAsync($"doors");
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            return Ok(responseBody);
+            var doors = await _doorsService.GetAvailableDoors(authHeader);
+            return Ok(doors);
         }
 
         
         [HttpGet("WorkerDetails")]
-        public async Task<ActionResult<UpdateUserDto>> GetUserById(int id)
+        public async Task<ActionResult<UserDetailsDto>> GetUserById()
         {
             _logger.LogInformation("Entered HttpGet(\"WorkerDetails\")");
             try
             {
                 string authHeader = HttpContext.Request.Headers["Authorization"];
                 _tokenService.IsTokenValid(authHeader);
-                _loginClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authHeader);
-                var response = await _loginClient.GetAsync($"");
-                string responseBody = await response.Content.ReadAsStringAsync();
-
+                var responseBody = await _userService.GetUserFullDetails(authHeader);
                 return Ok(responseBody);
             }
             catch(Exception ex)
@@ -72,43 +75,65 @@ namespace Management.Controllers
         }
 
 
-        [HttpPatch("StartScare/{id}")]
-        public async Task<ActionResult<IEnumerable<string>>> StartScare(int id)
+        [HttpPatch("StartScare/{doorId}")]
+        public async Task<ActionResult<IEnumerable<string>>> StartScare(int doorId)
         {
             _logger.LogInformation("Entered HttpPatch(\"StartScare\")");
-            var doorUpdateRequest = new DoorUpdateRequest
+
+            try
             {
-                Used = true,
-            };
-            var requestBody = JsonConvert.SerializeObject(doorUpdateRequest);
-
-            var httpContent = new StringContent(requestBody, Encoding.UTF8, "application/json");
-           
-            var response = await _doorsClient.PatchAsync($"doors/{id}", httpContent);
-          
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            return Ok(responseBody);
+                // auth
+                string authHeader = HttpContext.Request.Headers["Authorization"];
+                _tokenService.IsTokenValid(authHeader);
+                await _workdayService.StartWorkday(doorId, authHeader);
+                return Ok("StartScare Worked !");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return BadRequest(ex.Message);
+            }
+         
         }
 
-        [HttpPatch("EndScare/{id}")]
-        public async Task<ActionResult<IEnumerable<string>>> EndScare(int id)
+        [HttpPatch("EndScare/{doorId}")]
+        public async Task<ActionResult<IEnumerable<string>>> EndScare(int doorId)
         {
             _logger.LogInformation("Entered HttpPatch(\"EndScare\")");
-            var doorUpdateRequest = new DoorUpdateRequest
+         
+            try
             {
-                Used = null,
-            };
-            var requestBody = JsonConvert.SerializeObject(doorUpdateRequest);
-
-            var httpContent = new StringContent(requestBody, Encoding.UTF8, "application/json");
-
-            var response = await _doorsClient.PatchAsync($"doors/{id}", httpContent);
-
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            return Ok(responseBody);
+                string authHeader = HttpContext.Request.Headers["Authorization"];
+                _tokenService.IsTokenValid(authHeader);
+                await _workdayService.EndWorkday(doorId, authHeader);
+                return Ok("EndWorkday Worked !");
+               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return BadRequest(ex.Message);
+            }
+          
         }
+
+        [HttpPatch("UpdateUserDetails")]
+        public async Task<IActionResult> UpdateUserById([FromBody] UpdateUserDto patchDoc)
+        {
+            _logger.LogInformation("Entered HttpPatch(\"UpdateUserById\")");
+            string authHeader = HttpContext.Request.Headers["Authorization"];
+            _tokenService.IsTokenValid(authHeader);
+            try
+            {
+                await _userService.UpdateUserById(patchDoc, authHeader);
+                return Ok("the user has been updated");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
 
     }

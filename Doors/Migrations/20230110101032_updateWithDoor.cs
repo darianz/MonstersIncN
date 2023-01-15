@@ -4,12 +4,12 @@
 
 namespace Doors.Migrations
 {
-    public partial class doorsTable : Migration
+    public partial class updateWithDoor : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Doors",
+                name: "Door",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -19,14 +19,14 @@ namespace Doors.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Doors", x => x.Id);
+                    table.PrimaryKey("PK_Door", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Doors");
+                name: "Door");
         }
     }
 }

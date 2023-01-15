@@ -1,8 +1,11 @@
+using Doors.Exceptions;
+using Doors.Middleware;
 using Doors.Models;
 using Doors.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +15,40 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Doors API", Version = "v1" });
+
+    c.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.ApiKey,
+        Name = "Authorization",
+        In = ParameterLocation.Header
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Authorization"
+                }
+            },
+            new string[] {}
+        }
+    });
+
+   
+});
+
 builder.Services.AddScoped<DoorService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddSingleton<ILoggerFactory, LoggerFactory>();
+
+
 // Add the database connection
 try
 {
@@ -53,10 +86,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseHttpsRedirection();
 
-//app.UseAuthorization();
 
 app.MapControllers();
 
@@ -75,3 +109,6 @@ catch (Exception e)
 }
 
 app.Run();
+
+
+

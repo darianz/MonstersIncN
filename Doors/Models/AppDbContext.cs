@@ -12,7 +12,7 @@ using System.Data;
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         { }
 
-       
+
         public DbSet<Door> Door { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

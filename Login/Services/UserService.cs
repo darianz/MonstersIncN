@@ -76,7 +76,7 @@ namespace Login.Services
             return user;
         }
 
-        public async Task UpdateUser(int id, JsonPatchDocument<UpdateUserDto> patchDoc)
+        public async Task<bool> UpdateUser(int id, UpdateUserDto patchDoc)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -86,11 +86,11 @@ namespace Login.Services
 
             var updateUserDto = new UpdateUserDto
             {
-                Username = user.Username,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                TentaclesNumber = user.TentaclesNumber
+                Username = patchDoc.Username,
+                FirstName = patchDoc.FirstName,
+                LastName = patchDoc.LastName,
+                PhoneNumber = patchDoc.PhoneNumber,
+                TentaclesNumber = patchDoc.TentaclesNumber
             };
 
            
@@ -101,7 +101,21 @@ namespace Login.Services
             user.PhoneNumber = updateUserDto.PhoneNumber;
             user.TentaclesNumber = updateUserDto.TentaclesNumber;
             await _context.SaveChangesAsync();
+            return true;
+        }
 
+        public async Task<bool> UpdateScaringStartDate(int id, DateTime ScaringStartDate )
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+          user.ScaringStartDate = ScaringStartDate;
+
+          
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<User> GetUserById(int id)
