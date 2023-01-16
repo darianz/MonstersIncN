@@ -4,7 +4,7 @@ namespace Login.DTOs
 {
     public class UpdateUserDto
     {
-        [Required]
+      
         public string Username { get; set; }
 
         public string FirstName { get; set; }

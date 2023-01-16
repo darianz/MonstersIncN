@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "FVK/4BOs7JRzhD3OC22bS7cWxUw7Ms2aVhRx+t51pr9BTm6ooHA/PdGaheADDDBcNUB0huNan4hFUjXvZtYA1g==",
+  "dgSpecHash": "SanD2fjIFKTDYDIadF65VDqQeodXMJHtC/SOFD9USLdMcazVX7xhu/4ohN55gOZjxm7wPmFz4YbXl1VMOBxoJQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Stoleron\\source\\repos\\MonstersIncN\\Login\\Login.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Stoleron\\.nuget\\packages\\fluentvalidation\\11.4.0\\fluentvalidation.11.4.0.nupkg.sha512",
     "C:\\Users\\Stoleron\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Stoleron\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\Stoleron\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

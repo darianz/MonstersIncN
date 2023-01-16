@@ -134,6 +134,20 @@ namespace Management.Controllers
             }
         }
 
+        [HttpGet("workdaycache/{startDate}/{endDate}")]
+        public IActionResult GetWorkdayCacheByDateRange( DateTime startDate, DateTime endDate)
+        {
+            DateTime current = DateTime.Now;
+            _logger.LogInformation("Entered HttpPatch(\"UpdateUserById\")");
+            string authHeader = HttpContext.Request.Headers["Authorization"];
+            string userId = _tokenService.GetIdFromToken(authHeader);
+            var workdayCacheInfo = _workdayCacheService.GetWorkdayCacheInfoByDateRange(userId, startDate, endDate);
+            if (workdayCacheInfo == null)
+            {
+                return NotFound();
+            }
+            return Ok(workdayCacheInfo);
+        }
 
 
     }

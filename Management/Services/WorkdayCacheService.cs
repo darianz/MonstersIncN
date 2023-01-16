@@ -67,16 +67,53 @@ namespace Management.Services
             }
         }
 
-        
+        public void SumEnergyByDate(string userId)
+        {
+            var userInfo = _cache.Get(userId) as List<WorkdayCacheInfo>;
+            if (userInfo != null)
+            {
+                var groupByDate = userInfo.GroupBy(w => w.Date);
+                foreach (var dateGroup in groupByDate)
+                {
+                    var totalEnergy = dateGroup.SelectMany(w => w.DoorUpdateResults.Cast<DoorUpdateResult>()).Sum(d => d.Energy);
+
+                    _logger.LogInformation($"Total energy on {dateGroup.Key.ToShortDateString()} is {totalEnergy}");
+                }
+            }
+        }
 
         public List<WorkdayCacheInfo> GetAllCacheData(string userId)
         {
             return _cache.Get(userId) as List<WorkdayCacheInfo>;
         }
-       
 
 
-
+        private int CalculateDailyGoal(DateTime UserScaringStartDate)
+        {
+            DateTime currentTime = DateTime.Now;
+            // Bring User Exp and see if he worked before, calculate energy demand
+            int yearsDelta = currentTime.Year - UserScaringStartDate.Year;
+            if (yearsDelta < 0)
+            {
+                return 100;
+            }
+            else
+            {
+                return ((yearsDelta * 20) + 100);
+            }
+        }
+        public List<WorkdayCacheInfo> GetWorkdayCacheInfoByDateRange(string userId, DateTime startDate, DateTime endDate)
+        {
+            List<WorkdayCacheInfo> userInfo = _cache.Get(userId) as List<WorkdayCacheInfo>;
+            if (userInfo == null)
+            {
+                return new List<WorkdayCacheInfo>();
+            }
+            else
+            {
+                return userInfo.Where(w => w.Date >= startDate && w.Date <= endDate).ToList();
+            }
+        }
     }
 
 

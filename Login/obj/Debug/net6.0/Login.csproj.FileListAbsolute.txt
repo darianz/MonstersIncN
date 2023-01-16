@@ -71,3 +71,4 @@ C:\Users\Stoleron\source\repos\MonstersIncN\Login\obj\Debug\net6.0\ref\Login.dll
 C:\Users\Stoleron\source\repos\MonstersIncN\Login\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\Users\Stoleron\source\repos\MonstersIncN\Login\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Users\Stoleron\source\repos\MonstersIncN\Login\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\Stoleron\source\repos\MonstersIncN\Login\bin\Debug\net6.0\FluentValidation.dll

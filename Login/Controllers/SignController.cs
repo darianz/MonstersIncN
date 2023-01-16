@@ -3,6 +3,7 @@ using Login.Interfaces;
 using Login.Migrations;
 using Login.Models;
 using Login.Services;
+using Login.Validations;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -66,6 +67,13 @@ namespace Login.Controllers
             _logger.LogInformation("Entered HttpPost(\"register\")");
             try
             {
+                var validator = new RegisterDtoValidator();
+                var validationResult = validator.Validate(registerDto);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var user = await _userService.RegisterUser(registerDto);
                 return new UserDto
                 {
@@ -85,6 +93,13 @@ namespace Login.Controllers
             _logger.LogInformation("Entered HttpPost(\"login\")");
             try
             {
+                var validator = new LoginDtoValidator();
+                var validationResult = validator.Validate(loginDto);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
                 var user = await _userService.Login(loginDto);
                 return new UserDto
                 {
